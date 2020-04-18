@@ -10,6 +10,7 @@ namespace game_of_life
     {
         //public variables
         static int w = 30, h = 30, speed = 1;
+        public static List<player> players = new List<player>();
 
 
         static void Main(string[] args)
