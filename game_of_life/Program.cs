@@ -29,7 +29,7 @@ namespace game_of_life
 
 
             //---------------- a simple test ------------------
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 200; i++)
             {
                 player p = new player((player.player_kind)(i % 5), "", -1, -1, -1,-1,true) ;
 
@@ -66,8 +66,8 @@ namespace game_of_life
                 r.End = Program.__nameend;
                 do
                 {
-                    name = r.getRandFrom().ToString();
-                } while (Program.havePlayer(name));
+                    Name = r.getRandFrom().ToString();
+                } while (Program.havePlayer(Name));
             }
             
             Kind = kind;
