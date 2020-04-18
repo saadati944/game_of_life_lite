@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace game_of_life
 {
-    
+
     class Program
     {
         static void Main(string[] args)
@@ -23,9 +23,9 @@ namespace game_of_life
             //---------------- a simple test ------------------
             for (int i = 0; i < 100; i++)
             {
-                player p = new player((player.player_kind)(i % 5), "" ,new point(-1,-1),(player.player_direction)range.getRandFrom(0,6),'\\', -1,-1, -1, -1,-1,true) ;
+                player p = new player((player.player_kind)(i % 5), "", new point(-1, -1), (player.player_direction)range.getRandFrom(0, 6), '\\', -1, -1, -1, -1, -1, true);
                 world.players.Add(p);
-                Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\ndirection : {9}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character,p.Position.ToString(),p.Direction.ToString());
+                Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\ndirection : {9}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character, p.Position.ToString(), p.Direction.ToString());
             }
             /*player p = new player((player.player_kind)(0), "", new point(0, 29), (player.player_direction)range.getRandFrom(0, 6), '3', -1, -1, -1, -1, true);
             world.players.Add(p);
@@ -44,229 +44,281 @@ namespace game_of_life
                 world.draw();
                 Console.SetCursorPosition(0, 0);
                 Console.Write(world.convertBuffer());
+                Console.Title = $"generation : {world.generation} & year : {world.year}";
                 System.Threading.Thread.Sleep(20);
             }
         }
-        
+
     }
     static class world
     {
         public static char[,] buffer, nullBuffer;
-        public static long generation=0, year=0;
+        public static long generation = 0, year = 0;
         //public variables
-        public static int w = 30, h = 30, speed = 1;
+        public static int w = 60, h = 30, speed = 1;
         public static List<player> players = new List<player>();
         #region configValues
-        public static int __weightstart = 10, __weightend = 150, __agestart = 0, __hungerstart = 0, __hungerend = 10, __maxagestart = 10, __maxageend = 100, __namestart = 100000, __nameend = 900000,__genstoyear=30;
+        public static int __weightstart = 10, __weightend = 150, __agestart = 0, __hungerstart = 0, __hungerend = 10, __maxagestart = 10, __maxageend = 100, __namestart = 100000, __nameend = 900000, __genstoyear = 30;
         public static char[] __defaultKindCharacters = { 'M', 'F', 'f', 'A', 'a' };
         #endregion
         public static void nextGen()
         {
+            if (players.Count == 0)
+            {
+                gameOver();
+                return;
+            }
+            List<player> toRemove = new List<player>();
             for (int i = 0; i < players.Count; i++)
             {
+                if (generation % __genstoyear == 0)
+                    players[i].Age++;
+                if (players[i].Weight == 0)
+                {
+                    toRemove.Add(players[i]);
+                    continue;
+                }
+                if (players[i].Age >= players[i].MaxAge)
+                {
+                    players[i].Alive = false;
+                    switch (players[i].Kind)
+                    {
+                        case player.player_kind.male:
+                            players[i].Kind = player.player_kind.food;
+                            players[i].Age = 0;
+                            break;
+                        case player.player_kind.female:
+                            players[i].Kind = player.player_kind.food;
+                            players[i].Age = 0;
+                            break;
+                        case player.player_kind.food:
+                            toRemove.Add(players[i]);
+                            continue;
+                        //break;
+                        case player.player_kind.animalMale:
+                            players[i].Kind = player.player_kind.food;
+                            players[i].Age = 0;
+                            break;
+                        case player.player_kind.animalFemale:
+                            players[i].Kind = player.player_kind.food;
+                            players[i].Age = 0;
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 if (players[i].Alive == false)
                     continue;
 
                 //moving codes
                 if (players[i].Kind != player.player_kind.food)
-                switch (players[i].Direction)
-                {
-                    case player.player_direction.n:
-                        if (players[i].Position.y > 0)
-                        {
-                            if (range.getRandFrom(0, 6) == 0)
-                                players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                    switch (players[i].Direction)
+                    {
+                        case player.player_direction.n:
+                            if (players[i].Position.y > 0)
+                            {
+                                if (range.getRandFrom(0, 6) == 0)
+                                    players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                                else
+                                    players[i].Position.y--;
+                            }
                             else
+                                players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                            /*if (players[i].Position.y > 0)
                                 players[i].Position.y--;
-                        }
-                        else
-                            players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
-                        /*if (players[i].Position.y > 0)
-                            players[i].Position.y--;
-                        else
-                        {
-                            switch (range.getRandFrom(0, 2))
-                            {
-                                case 0:
-                                    players[i].Direction = player.player_direction.s;
-                                    break;
-                                case 1:
-                                    if (players[i].Position.x > 0)
-                                        players[i].Direction = player.player_direction.se;
-                                    break;
-                                case 2:
-                                    if (players[i].Position.x < w - 1)
-                                        players[i].Direction = player.player_direction.sw;
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }*/
-                        break;
-                    case player.player_direction.ne:
-                        if (players[i].Position.x < w - 1 && players[i].Position.y > 0)
-                        {
-                            if (range.getRandFrom(0, 6) == 0)
-                                players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
                             else
                             {
-                                players[i].Position.x++;
-                                players[i].Position.y--;
-                            }
-                        }
-                        else
-                            players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
-                        break;
-                    case player.player_direction.e:
-                        if (players[i].Position.x < w - 1)
-                        {
-                            if (range.getRandFrom(0, 6) == 0)
-                                players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
-                            else
-                                players[i].Position.x++;
-                        }
-                        else
-                            players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
-                        /*if (players[i].Position.x < w - 1)
-                            players[i].Position.x++;
-                        else
-                        {
-                            switch (range.getRandFrom(0, 2))
+                                switch (range.getRandFrom(0, 2))
+                                {
+                                    case 0:
+                                        players[i].Direction = player.player_direction.s;
+                                        break;
+                                    case 1:
+                                        if (players[i].Position.x > 0)
+                                            players[i].Direction = player.player_direction.se;
+                                        break;
+                                    case 2:
+                                        if (players[i].Position.x < w - 1)
+                                            players[i].Direction = player.player_direction.sw;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }*/
+                            break;
+                        case player.player_direction.ne:
+                            if (players[i].Position.x < w - 1 && players[i].Position.y > 0)
                             {
-                                case 0:
-                                    players[i].Direction = player.player_direction.w;
-                                    break;
-                                case 1:
-                                    if (players[i].Position.y > 0)
-                                        players[i].Direction = player.player_direction.nw;
-                                    break;
-                                case 2:
-                                    if (players[i].Position.x < w - 1)
-                                        players[i].Direction = player.player_direction.sw;
-                                    break;
-                                default:
-                                    break;
+                                if (range.getRandFrom(0, 6) == 0)
+                                    players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                                else
+                                {
+                                    players[i].Position.x++;
+                                    players[i].Position.y--;
+                                }
                             }
-                        }*/
-                        break;
-                    case player.player_direction.se:
-                        if (players[i].Position.x < h - 1 && players[i].Position.y < w - 1)
-                        {
-                            if (range.getRandFrom(0, 6) == 0)
+                            else
                                 players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                            break;
+                        case player.player_direction.e:
+                            if (players[i].Position.x < w - 1)
+                            {
+                                if (range.getRandFrom(0, 6) == 0)
+                                    players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                                else
+                                    players[i].Position.x++;
+                            }
+                            else
+                                players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                            /*if (players[i].Position.x < w - 1)
+                                players[i].Position.x++;
                             else
                             {
-                                players[i].Position.x++;
+                                switch (range.getRandFrom(0, 2))
+                                {
+                                    case 0:
+                                        players[i].Direction = player.player_direction.w;
+                                        break;
+                                    case 1:
+                                        if (players[i].Position.y > 0)
+                                            players[i].Direction = player.player_direction.nw;
+                                        break;
+                                    case 2:
+                                        if (players[i].Position.x < w - 1)
+                                            players[i].Direction = player.player_direction.sw;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }*/
+                            break;
+                        case player.player_direction.se:
+                            if (players[i].Position.x < w - 1 && players[i].Position.y < h - 1)
+                            {
+                                if (range.getRandFrom(0, 6) == 0)
+                                    players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                                else
+                                {
+                                    players[i].Position.x++;
+                                    players[i].Position.y++;
+                                }
+                            }
+                            else
+                                players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                            break;
+                        case player.player_direction.s:
+                            if (players[i].Position.y < h - 1)
+                            {
+                                if (range.getRandFrom(0, 6) == 0)
+                                    players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                                else
+                                    players[i].Position.y++;
+                            }
+                            else
+                                players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                            /*if (players[i].Position.y < h-1)
                                 players[i].Position.y++;
-                            }
-                        }
-                        else
-                            players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
-                        break;
-                    case player.player_direction.s:
-                        if (players[i].Position.y < h - 1)
-                        {
-                            if (range.getRandFrom(0, 6) == 0)
-                                players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
                             else
-                                players[i].Position.y++;
-                        }
-                        else
-                            players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
-                        /*if (players[i].Position.y < h-1)
-                            players[i].Position.y++;
-                        else
-                        {
-                            switch (range.getRandFrom(0, 2))
                             {
-                                case 0:
-                                    players[i].Direction = player.player_direction.n;
-                                    break;
-                                case 1:
-                                    if (players[i].Position.x > 0)
-                                        players[i].Direction = player.player_direction.ne;
-                                    break;
-                                case 2:
-                                    if (players[i].Position.x < w - 1)
-                                        players[i].Direction = player.player_direction.nw;
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }*/
-                        break;
-                    case player.player_direction.sw:
+                                switch (range.getRandFrom(0, 2))
+                                {
+                                    case 0:
+                                        players[i].Direction = player.player_direction.n;
+                                        break;
+                                    case 1:
+                                        if (players[i].Position.x > 0)
+                                            players[i].Direction = player.player_direction.ne;
+                                        break;
+                                    case 2:
+                                        if (players[i].Position.x < w - 1)
+                                            players[i].Direction = player.player_direction.nw;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }*/
+                            break;
+                        case player.player_direction.sw:
 
-                        if (players[i].Position.x > 0 && players[i].Position.y < w - 1)
-                        {
-                            if (range.getRandFrom(0, 6) == 0)
+                            if (players[i].Position.x > 0 && players[i].Position.y < h - 1)
+                            {
+                                if (range.getRandFrom(0, 6) == 0)
+                                    players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                                else
+                                {
+                                    players[i].Position.x--;
+                                    players[i].Position.y++;
+                                }
+                            }
+                            else
                                 players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                            break;
+                        case player.player_direction.w:
+                            if (players[i].Position.x > 0)
+                            {
+                                if (range.getRandFrom(0, 6) == 0)
+                                    players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                                else
+                                    players[i].Position.x--;
+                            }
+                            else
+                                players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                            /*if (players[i].Position.x > 0)
+                                players[i].Position.x--;
                             else
                             {
-                                players[i].Position.x--;
-                                players[i].Position.y++;
-                            }
-                        }
-                        else
-                            players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
-                        break;
-                    case player.player_direction.w:
-                        if (players[i].Position.x > 0)
-                        {
-                            if (range.getRandFrom(0, 6) == 0)
-                                players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
-                            else
-                                players[i].Position.x--;
-                        }
-                        else
-                            players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
-                        /*if (players[i].Position.x > 0)
-                            players[i].Position.x--;
-                        else
-                        {
-                            switch (range.getRandFrom(0, 2))
+                                switch (range.getRandFrom(0, 2))
+                                {
+                                    case 0:
+                                        players[i].Direction = player.player_direction.e;
+                                        break;
+                                    case 1:
+                                        if (players[i].Position.y > 0)
+                                            players[i].Direction = player.player_direction.nw;
+                                        break;
+                                    case 2:
+                                        if (players[i].Position.y < h - 1)
+                                            players[i].Direction = player.player_direction.sw;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }*/
+                            break;
+                        case player.player_direction.nw:
+                            if (players[i].Position.x > 0 && players[i].Position.y > 0)
                             {
-                                case 0:
-                                    players[i].Direction = player.player_direction.e;
-                                    break;
-                                case 1:
-                                    if (players[i].Position.y > 0)
-                                        players[i].Direction = player.player_direction.nw;
-                                    break;
-                                case 2:
-                                    if (players[i].Position.y < h - 1)
-                                        players[i].Direction = player.player_direction.sw;
-                                    break;
-                                default:
-                                    break;
+                                if (range.getRandFrom(0, 6) == 0)
+                                    players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                                else
+                                {
+                                    players[i].Position.x--;
+                                    players[i].Position.y--;
+                                }
                             }
-                        }*/
-                        break;
-                    case player.player_direction.nw:
-                        if (players[i].Position.x > 0 && players[i].Position.y > 0)
-                        {
-                            if (range.getRandFrom(0, 6) == 0)
-                                players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
                             else
-                            {
-                                players[i].Position.x--;
-                                players[i].Position.y--;
-                            }
-                        }
-                        else
-                            players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
-                        break;
-                    default:
-                        break;
-                }
+                                players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
+                            break;
+                        default:
+                            break;
+                    }
             }
             generation++;
             if (generation % __genstoyear == 0)
                 ++year;
+            foreach (player x in toRemove)
+                players.Remove(x);
+        }
+        public static void gameOver()
+        {
+            Console.SetCursorPosition(0, 0);
+            Console.Write("your world ended in {0} generations ({1} years).", generation, year);
+            Console.ReadLine();
+            
         }
         public static void draw()
         {
-            if(nullBuffer==null||nullBuffer.GetLength(0)!=w||nullBuffer.GetLength(1)!=h)
+            if (nullBuffer == null || nullBuffer.GetLength(0) != w || nullBuffer.GetLength(1) != h)
                 nullBuffer = emptyBuffer();
             buffer = (char[,])nullBuffer.Clone();
             foreach (player p in players)
@@ -279,11 +331,11 @@ namespace game_of_life
             StringBuilder map = new StringBuilder();
             for (int j = 0; j < h; j++)
             {
-                for (int i = 0; i < w; i++) 
+                for (int i = 0; i < w; i++)
                 {
-                    map.Append(buffer[i,j]);
+                    map.Append(buffer[i, j]);
                 }
-                if(j!=h-1) map.Append('\n');
+                if (j != h - 1) map.Append('\n');
             }
             return map.ToString();
         }
@@ -311,16 +363,17 @@ namespace game_of_life
         }
         public static int getPlayerAt(point position)
         {
-            for (int i=0;i<players.Count;i++)
+            for (int i = 0; i < players.Count; i++)
                 if (players[i].Position.x == position.x && players[i].Position.y == position.y)
                     return i;
             return -1;
         }
     }
+
     class player
     {
-        public enum player_kind { male=0, female=1, food=2, animalMale=3 ,animalFemale=4}
-        public enum player_direction {n=0,ne=1,e=2,se=3,s=4,sw=5,w=6,nw=7 }
+        public enum player_kind { male = 0, female = 1, food = 2, animalMale = 3, animalFemale = 4 }
+        public enum player_direction { n = 0, ne = 1, e = 2, se = 3, s = 4, sw = 5, w = 6, nw = 7 }
 
         public string Name;
         public bool Alive;
@@ -335,10 +388,10 @@ namespace game_of_life
         //"" for string values will replace randomly
         //'\' for character values will replace randomly
         //(-1,-1) for points will replace randomly
-        public player( player_kind kind,string name,point position,player_direction direction,char character='\\', int age = 0,int injure=0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
+        public player(player_kind kind, string name, point position, player_direction direction, char character = '\\', int age = 0, int injure = 0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
         {
             range r = new range(0, 1);
-            
+
             //try to find a random name if name not assigned
             if (name == "")
             {
@@ -349,12 +402,12 @@ namespace game_of_life
                     Name = r.getRandFrom().ToString();
                 } while (world.havePlayer(Name));
             }
-            
+
             Kind = kind;
             Direction = direction;
 
             //assign character accourding to kind if not assidned
-            Character = character == '\\' ? world.__defaultKindCharacters[(int)kind]:character;
+            Character = character == '\\' ? world.__defaultKindCharacters[(int)kind] : character;
 
             //try to guess a maxage for player if not assigned
             if (maxAge > 0)
@@ -392,12 +445,12 @@ namespace game_of_life
                 do
                 {
                     r.Start = 0;
-                    r.End = world.w-1;
+                    r.End = world.w - 1;
                     position.x = r.getRandFrom();
-                    r.End = world.h-1;
+                    r.End = world.h - 1;
                     position.y = r.getRandFrom();
                 } while (!world.isPositionEmpty(position));
-            Position=position;
+            Position = position;
         }
     }
 
@@ -412,11 +465,11 @@ namespace game_of_life
         }
         public int getRandFrom()
         {
-            return r.Next(Start, End+1);
+            return r.Next(Start, End + 1);
         }
         public static int getRandFrom(int start, int end)
         {
-            return r.Next(start, end+1);
+            return r.Next(start, end + 1);
         }
     }
     class point
