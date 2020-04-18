@@ -21,12 +21,24 @@ namespace game_of_life
 
 
             //---------------- a simple test ------------------
-            for (int i = 0; i < 100; i++)
+            /*for (int i = 0; i < 100; i++)
             {
-                player p = new player((player.player_kind)(i % 5), "",new point(-1,-1),'\\', -1, -1, -1,-1,true) ;
+                player p = new player((player.player_kind)(i % 5), "" ,new point(-1,-1),(player.player_direction)range.getRandFrom(0,6),'\\', -1, -1, -1,-1,true) ;
                 world.players.Add(p);
-                Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character,p.Position.ToString());
-            }
+                Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\ndirection : {9}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character,p.Position.ToString(),p.Direction.ToString());
+            }*/
+            player p = new player((player.player_kind)(0), "", new point(0, 29), (player.player_direction)range.getRandFrom(0, 6), '3', -1, -1, -1, -1, true);
+            world.players.Add(p);
+            Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\ndirection : {9}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character, p.Position.ToString(), p.Direction.ToString());
+            p = new player((player.player_kind)(1), "", new point(0, 0), (player.player_direction)range.getRandFrom(0, 6), '0', -1, -1, -1, -1, true);
+            world.players.Add(p);
+            Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\ndirection : {9}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character, p.Position.ToString(), p.Direction.ToString());
+            p = new player((player.player_kind)(2), "", new point(29, 0), (player.player_direction)range.getRandFrom(0, 6), '1', -1, -1, -1, -1, true);
+            world.players.Add(p);
+            Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\ndirection : {9}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character, p.Position.ToString(), p.Direction.ToString());
+            p = new player((player.player_kind)(2), "", new point(29, 29), (player.player_direction)range.getRandFrom(0, 6), '2', -1, -1, -1, -1, true);
+            world.players.Add(p);
+            Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\ndirection : {9}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character, p.Position.ToString(), p.Direction.ToString());
             world.draw();
             Console.Write(world.convertBuffer());
         }
@@ -59,13 +71,13 @@ namespace game_of_life
         public static string convertBuffer()
         {
             StringBuilder map = new StringBuilder();
-            for (int i = 0; i < w; i++)
+            for (int j = 0; j < h; j++)
             {
-                for (int j = 0; j < h; j++)
+                for (int i = 0; i < w; i++) 
                 {
                     map.Append(buffer[i,j]);
                 }
-                if(i!=w-1) map.Append('\n');
+                if(j!=h-1) map.Append('\n');
             }
             return map.ToString();
         }
@@ -94,7 +106,7 @@ namespace game_of_life
         public bool Alive;
         public int Age, Hunger, Weight, MaxAge;
         public player_kind Kind;
-        player_direction Direction;
+        public player_direction Direction;
         public char Character;
         public point Position;
 
@@ -152,10 +164,9 @@ namespace game_of_life
             Weight = weight == -1 ? r.getRandFrom() : weight;
 
             //try to find a new empty position.
-            if (position.x == -1 && position.y == -1 || !world.isPositionEmpty(position))
+            if (position.x == -1 || position.y == -1 || !world.isPositionEmpty(position))
                 do
                 {
-
                     r.Start = 0;
                     r.End = world.w-1;
                     position.x = r.getRandFrom();
