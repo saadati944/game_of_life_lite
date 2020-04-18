@@ -9,24 +9,15 @@ namespace game_of_life
     
     class Program
     {
-        //public variables
-        public static int w = 30, h = 30, speed = 1;
-        public static List<player> players = new List<player>();
-        #region configValues
-        public static int __weightstart = 10, __weightend = 150, __agestart = 0, __hungerstart = 0,__hungerend=10,__maxagestart=10,__maxageend=100,__namestart=100000,__nameend=900000;
-        public static char[] __defaultKindCharacters = {'M','F','f','A','a' };
-        #endregion
-
-
         static void Main(string[] args)
         {
             //try to assign variables form given args.
             if (args.Length > 0)
-                int.TryParse(args[0], out w);
+                int.TryParse(args[0], out world.w);
             if (args.Length > 1)
-                int.TryParse(args[0], out h);
+                int.TryParse(args[0], out world.h);
             if (args.Length > 2)
-                int.TryParse(args[0], out speed);
+                int.TryParse(args[0], out world.speed);
 
 
             //---------------- a simple test ------------------
@@ -37,6 +28,17 @@ namespace game_of_life
                 Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character,p.Position.ToString());
             }
         }
+        
+    }
+    static class world
+    {
+        //public variables
+        public static int w = 30, h = 30, speed = 1;
+        public static List<player> players = new List<player>();
+        #region configValues
+        public static int __weightstart = 10, __weightend = 150, __agestart = 0, __hungerstart = 0, __hungerend = 10, __maxagestart = 10, __maxageend = 100, __namestart = 100000, __nameend = 900000;
+        public static char[] __defaultKindCharacters = { 'M', 'F', 'f', 'A', 'a' };
+        #endregion
         public static bool havePlayer(string name)
         {
             foreach (player x in players)
@@ -74,32 +76,32 @@ namespace game_of_life
             //try to find a random name if name not assigned
             if (name == "")
             {
-                r.Start = Program.__namestart;
-                r.End = Program.__nameend;
+                r.Start = world.__namestart;
+                r.End = world.__nameend;
                 do
                 {
                     Name = r.getRandFrom().ToString();
-                } while (Program.havePlayer(Name));
+                } while (world.havePlayer(Name));
             }
             
             Kind = kind;
 
             //assign character accourding to kind if not assidned
-            Character = character == '\\' ? Program.__defaultKindCharacters[(int)kind]:character;
+            Character = character == '\\' ? world.__defaultKindCharacters[(int)kind]:character;
 
             //try to guess a maxage for player if not assigned
             if (maxAge > 0)
                 MaxAge = maxAge;
             else
             {
-                r.Start = Program.__maxagestart; r.End = Program.__maxageend;
+                r.Start = world.__maxagestart; r.End = world.__maxageend;
                 MaxAge = r.getRandFrom();
             }
 
             //try to guess an age for player if not assigned
             if (age == -1)
             {
-                r.Start = Program.__agestart;
+                r.Start = world.__agestart;
                 r.End = MaxAge;
                 Age = r.getRandFrom();
             }
@@ -108,24 +110,24 @@ namespace game_of_life
             Alive = Age < MaxAge ? alive : false;
 
             //try to guess a hunger level for player if not assigned
-            r.Start = Program.__hungerstart; r.End = Program.__hungerend;
+            r.Start = world.__hungerstart; r.End = world.__hungerend;
             Hunger = hunger == -1 ? r.getRandFrom() : hunger;
 
             //try to guess a weight for player if not assigned
-            r.Start = Program.__weightstart; r.End = Program.__weightend;
+            r.Start = world.__weightstart; r.End = world.__weightend;
             Weight = weight == -1 ? r.getRandFrom() : weight;
 
             //try to find a new empty position.
-            if (position.x == -1 && position.y == -1 || !Program.isPositionEmpty(position))
+            if (position.x == -1 && position.y == -1 || !world.isPositionEmpty(position))
                 do
                 {
 
                     r.Start = 0;
-                    r.End = Program.w;
+                    r.End = world.w;
                     position.x = r.getRandFrom();
-                    r.End = Program.h;
+                    r.End = world.h;
                     position.y = r.getRandFrom();
-                } while (!Program.isPositionEmpty(position));
+                } while (!world.isPositionEmpty(position));
             Position=position;
         }
     }
