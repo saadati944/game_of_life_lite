@@ -21,19 +21,22 @@ namespace game_of_life
 
 
             //---------------- a simple test ------------------
-            for (int i = 0; i < 900; i++)
+            for (int i = 0; i < 100; i++)
             {
                 player p = new player((player.player_kind)(i % 5), "",new point(-1,-1),'\\', -1, -1, -1,-1,true) ;
                 world.players.Add(p);
                 Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character,p.Position.ToString());
             }
+            world.draw();
+            Console.Write(world.convertBuffer());
         }
         
     }
     static class world
     {
+        public static char[,] buffer ;
         //public variables
-        public static int w = 30, h = 30, speed = 1;
+        public static int w = 60, h = 30, speed = 1;
         public static List<player> players = new List<player>();
         #region configValues
         public static int __weightstart = 10, __weightend = 150, __agestart = 0, __hungerstart = 0, __hungerend = 10, __maxagestart = 10, __maxageend = 100, __namestart = 100000, __nameend = 900000;
@@ -52,6 +55,27 @@ namespace game_of_life
                 if (x.Position.x == p.x && x.Position.y == p.y)
                     return false;
             return true;
+        }
+        public static string convertBuffer()
+        {
+            StringBuilder map = new StringBuilder();
+            for (int i = 0; i < w; i++)
+            {
+                for (int j = 0; j < h; j++)
+                {
+                    map.Append(buffer[i,j]);
+                }
+                if(i!=w-1) map.Append('\n');
+            }
+            return map.ToString();
+        }
+        public static void draw()
+        {
+            buffer = new char[w, h];
+            foreach(player p in players)
+            {
+                buffer[p.Position.x, p.Position.y] = p.Character;
+            }
         }
     }
     class player
