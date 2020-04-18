@@ -77,6 +77,13 @@ namespace game_of_life
                 buffer[p.Position.x, p.Position.y] = p.Character;
             }
         }
+        public static int getPlayerAt(point position)
+        {
+            for (int i=0;i<players.Count;i++)
+                if (players[i].Position.x == position.x && players[i].Position.y == position.y)
+                    return i;
+            return -1;
+        }
     }
     class player
     {
