@@ -10,7 +10,7 @@ namespace game_of_life
     class Program
     {
         //public variables
-        static int w = 30, h = 30, speed = 1;
+        public static int w = 30, h = 30, speed = 1;
         public static List<player> players = new List<player>();
         #region configValues
         public static int __weightstart = 10, __weightend = 150, __agestart = 0, __hungerstart = 0,__hungerend=10,__maxagestart=10,__maxageend=100,__namestart=100000,__nameend=900000;
@@ -32,7 +32,7 @@ namespace game_of_life
             //---------------- a simple test ------------------
             for (int i = 0; i < 200; i++)
             {
-                player p = new player((player.player_kind)(i % 5), "",'\\', -1, -1, -1,-1,true) ;
+                player p = new player((player.player_kind)(i % 5), "",new point(-1,-1),'\\', -1, -1, -1,-1,true) ;
 
                 Console.WriteLine("name : {0}\ncharacter : {7}\nkind : {1}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character);
             }
@@ -44,6 +44,13 @@ namespace game_of_life
                     return true;
             return false;
         }
+        public static bool isPositionEmpty(point p)
+        {
+            foreach (player x in players)
+                if (x.Position.x == p.x && x.Position.y == p.y)
+                    return false;
+            return true;
+        }
     }
     class player
     {
@@ -54,11 +61,13 @@ namespace game_of_life
         public int Age, Hunger, Weight, MaxAge;
         public player_kind Kind;
         public char Character;
+        public point Position;
 
-        //-1 for int values will replace with randomly
-        //"" for string values will replace with randomly
-        //'\' for character values will replace with randomly
-        public player( player_kind kind,string name,char character='\\', int age = 0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
+        //-1 for int values will replace randomly
+        //"" for string values will replace randomly
+        //'\' for character values will replace randomly
+        //(-1,-1) for points will replace randomly
+        public player( player_kind kind,string name,point position,char character='\\', int age = 0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
         {
             range r = new range(0, 1);
             
@@ -106,6 +115,16 @@ namespace game_of_life
             r.Start = Program.__weightstart; r.End = Program.__weightend;
             Weight = weight == -1 ? r.getRandFrom() : weight;
 
+            //try to find a new empty position.
+            if (position.x == -1 && position.y == -1 || !Program.isPositionEmpty(position))
+                do
+                {
+                    r.Start = 0;
+                    r.End = Program.w;
+                    Position.x = r.getRandFrom();
+                    r.End = Program.h;
+                    Position.y = r.getRandFrom();
+                } while (!Program.isPositionEmpty(Position));
         }
     }
 
