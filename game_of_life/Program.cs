@@ -22,6 +22,25 @@ namespace game_of_life
             if (args.Length > 2)
                 int.TryParse(args[0], out speed);
 
+            
+
         }
     }
+    class player
+    {
+        public enum player_kind { male,female,food,animal }
+
+        public string Name;
+        public bool alive;
+        public int Age, Hunger, Weight,MaxAge;
+        public player_kind Kind;
+
+            //-1 for int values will replace with random
+            //"" for string values will replace with random
+        public player(string name, player_kind kind, int age = 0,int hunger=0,int weight=-1, int maxAge=-1, bool alive = true)
+        {
+
+        }
+    }
+
 }
