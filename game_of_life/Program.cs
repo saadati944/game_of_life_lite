@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace game_of_life
 {
+    
     class Program
     {
         //public variables
@@ -23,8 +24,13 @@ namespace game_of_life
             if (args.Length > 2)
                 int.TryParse(args[0], out speed);
 
-
-
+        }
+        public static bool havePlayer(string name)
+        {
+            foreach (player x in players)
+                if (x.Name == name)
+                    return true;
+            return false;
         }
     }
     class player
@@ -40,7 +46,7 @@ namespace game_of_life
         //"" for string values will replace with random
         public player(string name, player_kind kind, int age = 0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
         {
-
+            
         }
     }
 
@@ -51,16 +57,15 @@ namespace game_of_life
         public range(int start, int end)
         {
             Start = start;
-            End = end + 1;
+            End = end;
         }
         public int getRandFrom()
         {
-            return r.Next(Start, End);
+            return r.Next(Start, End+1);
         }
         public static int getRandFrom(int start, int end)
         {
-            ++end;
-            return r.Next(start, end);
+            return r.Next(start, end+1);
         }
     }
     class point
