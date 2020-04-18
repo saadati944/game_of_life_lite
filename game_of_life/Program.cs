@@ -21,7 +21,7 @@ namespace game_of_life
 
 
             //---------------- a simple test ------------------
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 100; i++)
             {
                 player p = new player((player.player_kind)(i % 5), "" ,new point(-1,-1),(player.player_direction)range.getRandFrom(0,6),'\\', -1, -1, -1,-1,true) ;
                 world.players.Add(p);
@@ -51,7 +51,7 @@ namespace game_of_life
     }
     static class world
     {
-        public static char[,] buffer ;
+        public static char[,] buffer, nullBuffer;
         public static long generation=0, year=0;
         //public variables
         public static int w = 30, h = 30, speed = 1;
@@ -66,12 +66,15 @@ namespace game_of_life
             {
                 if (players[i].Alive == false)
                     continue;
+
+                //moving codes
+                if (players[i].Kind != player.player_kind.food)
                 switch (players[i].Direction)
                 {
                     case player.player_direction.n:
                         if (players[i].Position.y > 0)
                         {
-                            if (range.getRandFrom(0, 4) == 0)
+                            if (range.getRandFrom(0, 6) == 0)
                                 players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
                             else
                                 players[i].Position.y--;
@@ -103,7 +106,7 @@ namespace game_of_life
                     case player.player_direction.ne:
                         if (players[i].Position.x < w - 1 && players[i].Position.y > 0)
                         {
-                            if (range.getRandFrom(0, 4) == 0)
+                            if (range.getRandFrom(0, 6) == 0)
                                 players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
                             else
                             {
@@ -117,7 +120,7 @@ namespace game_of_life
                     case player.player_direction.e:
                         if (players[i].Position.x < w - 1)
                         {
-                            if (range.getRandFrom(0, 4) == 0)
+                            if (range.getRandFrom(0, 6) == 0)
                                 players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
                             else
                                 players[i].Position.x++;
@@ -149,7 +152,7 @@ namespace game_of_life
                     case player.player_direction.se:
                         if (players[i].Position.x < h - 1 && players[i].Position.y < w - 1)
                         {
-                            if (range.getRandFrom(0, 4) == 0)
+                            if (range.getRandFrom(0, 6) == 0)
                                 players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
                             else
                             {
@@ -163,7 +166,7 @@ namespace game_of_life
                     case player.player_direction.s:
                         if (players[i].Position.y < h - 1)
                         {
-                            if (range.getRandFrom(0, 4) == 0)
+                            if (range.getRandFrom(0, 6) == 0)
                                 players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
                             else
                                 players[i].Position.y++;
@@ -196,7 +199,7 @@ namespace game_of_life
 
                         if (players[i].Position.x > 0 && players[i].Position.y < w - 1)
                         {
-                            if (range.getRandFrom(0, 4) == 0)
+                            if (range.getRandFrom(0, 6) == 0)
                                 players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
                             else
                             {
@@ -210,7 +213,7 @@ namespace game_of_life
                     case player.player_direction.w:
                         if (players[i].Position.x > 0)
                         {
-                            if (range.getRandFrom(0, 4) == 0)
+                            if (range.getRandFrom(0, 6) == 0)
                                 players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
                             else
                                 players[i].Position.x--;
@@ -242,7 +245,7 @@ namespace game_of_life
                     case player.player_direction.nw:
                         if (players[i].Position.x > 0 && players[i].Position.y > 0)
                         {
-                            if (range.getRandFrom(0, 4) == 0)
+                            if (range.getRandFrom(0, 6) == 0)
                                 players[i].Direction = (player.player_direction)range.getRandFrom(0, 6);
                             else
                             {
@@ -263,7 +266,9 @@ namespace game_of_life
         }
         public static void draw()
         {
-            buffer = new char[w, h]; emptyBuffer();
+            if(nullBuffer==null||nullBuffer.GetLength(0)!=w||nullBuffer.GetLength(1)!=h)
+                nullBuffer = emptyBuffer();
+            buffer = (char[,])nullBuffer.Clone();
             foreach (player p in players)
             {
                 buffer[p.Position.x, p.Position.y] = p.Character;
@@ -296,11 +301,13 @@ namespace game_of_life
                     return false;
             return true;
         }
-        public static void emptyBuffer()
+        public static char[,] emptyBuffer()
         {
+            char[,] bfr = new char[w, h];
             for (int i = 0; i < w; i++)
                 for (int j = 0; j < h; j++)
-                    buffer[i, j] = ' ';
+                    bfr[i, j] = ' ';
+            return bfr;
         }
         public static int getPlayerAt(point position)
         {
