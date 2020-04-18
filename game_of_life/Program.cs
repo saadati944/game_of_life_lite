@@ -98,7 +98,7 @@ namespace game_of_life
 
             //try to guess a weight for player if not assigned
             r.Start = Program.__weightstart; r.End = Program.__weightend;
-            weight = weight == -1 ? r.getRandFrom() : weight;
+            Weight = weight == -1 ? r.getRandFrom() : weight;
 
         }
     }
