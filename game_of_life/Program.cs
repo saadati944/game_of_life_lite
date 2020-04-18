@@ -14,6 +14,7 @@ namespace game_of_life
         public static List<player> players = new List<player>();
         #region configValues
         public static int __weightstart = 10, __weightend = 150, __agestart = 0, __hungerstart = 0,__hungerend=10,__maxagestart=10,__maxageend=100,__namestart=100000,__nameend=900000;
+        public static char[] __defaultKindCharacters = {'M','F','f','A','a' };
         #endregion
 
 
@@ -31,9 +32,9 @@ namespace game_of_life
             //---------------- a simple test ------------------
             for (int i = 0; i < 200; i++)
             {
-                player p = new player((player.player_kind)(i % 5), "", -1, -1, -1,-1,true) ;
+                player p = new player((player.player_kind)(i % 5), "",'\\', -1, -1, -1,-1,true) ;
 
-                Console.WriteLine("name : {0}\nkind : {1}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString());
+                Console.WriteLine("name : {0}\ncharacter : {7}\nkind : {1}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character);
             }
         }
         public static bool havePlayer(string name)
@@ -52,10 +53,12 @@ namespace game_of_life
         public bool Alive;
         public int Age, Hunger, Weight, MaxAge;
         public player_kind Kind;
+        public char Character;
 
-        //-1 for int values will replace with random
-        //"" for string values will replace with random
-        public player( player_kind kind,string name, int age = 0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
+        //-1 for int values will replace with randomly
+        //"" for string values will replace with randomly
+        //'\' for character values will replace with randomly
+        public player( player_kind kind,string name,char character='\\', int age = 0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
         {
             range r = new range(0, 1);
             
@@ -71,6 +74,9 @@ namespace game_of_life
             }
             
             Kind = kind;
+
+            //assign character accourding to kind if not assidned
+            Character = character == '\\' ? Program.__defaultKindCharacters[(int)kind]:character;
 
             //try to guess a maxage for player if not assigned
             if (maxAge > 0)
