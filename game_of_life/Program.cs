@@ -88,11 +88,13 @@ namespace game_of_life
     class player
     {
         public enum player_kind { male=0, female=1, food=2, animalMale=3 ,animalFemale=4}
+        public enum player_direction {n=0,ne=1,e=2,se=3,s=4,sw=5,w=6,nw=7 }
 
         public string Name;
         public bool Alive;
         public int Age, Hunger, Weight, MaxAge;
         public player_kind Kind;
+        player_direction Direction;
         public char Character;
         public point Position;
 
@@ -100,7 +102,7 @@ namespace game_of_life
         //"" for string values will replace randomly
         //'\' for character values will replace randomly
         //(-1,-1) for points will replace randomly
-        public player( player_kind kind,string name,point position,char character='\\', int age = 0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
+        public player( player_kind kind,string name,point position,player_direction direction,char character='\\', int age = 0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
         {
             range r = new range(0, 1);
             
@@ -116,6 +118,7 @@ namespace game_of_life
             }
             
             Kind = kind;
+            Direction = direction;
 
             //assign character accourding to kind if not assidned
             Character = character == '\\' ? world.__defaultKindCharacters[(int)kind]:character;
