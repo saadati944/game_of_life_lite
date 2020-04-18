@@ -12,11 +12,14 @@ namespace game_of_life
         //public variables
         static int w = 30, h = 30, speed = 1;
         public static List<player> players = new List<player>();
+        #region configValues
+        public static int __weightstart = 10, __weightend = 150, __agestart = 0, __hungerstart = 0,__hungerend=10,__maxagestart=10,__maxageend=100,__namestart=100000,__nameend=900000;
+        #endregion
 
 
         static void Main(string[] args)
         {
-            //try to asign variables form given args.
+            //try to assign variables form given args.
             if (args.Length > 0)
                 int.TryParse(args[0], out w);
             if (args.Length > 1)
@@ -38,15 +41,57 @@ namespace game_of_life
         public enum player_kind { male, female, food, animal }
 
         public string Name;
-        public bool alive;
+        public bool Alive;
         public int Age, Hunger, Weight, MaxAge;
         public player_kind Kind;
 
         //-1 for int values will replace with random
         //"" for string values will replace with random
-        public player(string name, player_kind kind, int age = 0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
+        public player( player_kind kind,string name, int age = 0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
         {
+            range r = new range(0, 1);
             
+            //try to find a random name if name not assigned
+            if (name == "")
+            {
+                r.Start = Program.__namestart;
+                r.End = Program.__nameend;
+                do
+                {
+                    name = r.getRandFrom().ToString();
+                } while (Program.havePlayer(name));
+            }
+            
+            Kind = kind;
+
+            //try to guess a maxage for player if not assigned
+            if (maxAge > 0)
+                MaxAge = maxAge;
+            else
+            {
+                r.Start = Program.__maxagestart; r.End = Program.__maxageend;
+                MaxAge = r.getRandFrom();
+            }
+
+            //try to guess an age for player if not assigned
+            if (age == -1)
+            {
+                r.Start = Program.__agestart;
+                r.End = MaxAge;
+                Age = r.getRandFrom();
+            }
+
+            //if age > maxage then player can`t live.
+            Alive = Age < MaxAge ? alive : false;
+
+            //try to guess a hunger level for player if not assigned
+            r.Start = Program.__hungerstart; r.End = Program.__hungerend;
+            Hunger = hunger == -1 ? r.getRandFrom() : hunger;
+
+            //try to guess a weight for player if not assigned
+            r.Start = Program.__weightstart; r.End = Program.__weightend;
+            weight = weight == -1 ? r.getRandFrom() : weight;
+
         }
     }
 
