@@ -63,5 +63,13 @@ namespace game_of_life
             return r.Next(start, end);
         }
     }
-
+    class point
+    {
+        public int x, y;
+        public point(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
 }
