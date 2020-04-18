@@ -27,6 +27,14 @@ namespace game_of_life
             if (args.Length > 2)
                 int.TryParse(args[0], out speed);
 
+
+            //---------------- a simple test ------------------
+            for (int i = 0; i < 20; i++)
+            {
+                player p = new player((player.player_kind)(i % 5), "", -1, -1, -1,-1,true) ;
+
+                Console.WriteLine("name : {0}\nkind : {1}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString());
+            }
         }
         public static bool havePlayer(string name)
         {
@@ -38,7 +46,7 @@ namespace game_of_life
     }
     class player
     {
-        public enum player_kind { male, female, food, animal }
+        public enum player_kind { male=0, female=1, food=2, animalMale=3 ,animalFemale=4}
 
         public string Name;
         public bool Alive;
