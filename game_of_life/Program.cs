@@ -23,7 +23,7 @@ namespace game_of_life
             //---------------- a simple test ------------------
             for (int i = 0; i < 100; i++)
             {
-                player p = new player((player.player_kind)(i % 5), "" ,new point(-1,-1),(player.player_direction)range.getRandFrom(0,6),'\\', -1, -1, -1,-1,true) ;
+                player p = new player((player.player_kind)(i % 5), "" ,new point(-1,-1),(player.player_direction)range.getRandFrom(0,6),'\\', -1,-1, -1, -1,-1,true) ;
                 world.players.Add(p);
                 Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\ndirection : {9}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character,p.Position.ToString(),p.Direction.ToString());
             }
@@ -325,6 +325,7 @@ namespace game_of_life
         public string Name;
         public bool Alive;
         public int Age, Hunger, Weight, MaxAge;
+        public int Injure;
         public player_kind Kind;
         public player_direction Direction;
         public char Character;
@@ -334,7 +335,7 @@ namespace game_of_life
         //"" for string values will replace randomly
         //'\' for character values will replace randomly
         //(-1,-1) for points will replace randomly
-        public player( player_kind kind,string name,point position,player_direction direction,char character='\\', int age = 0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
+        public player( player_kind kind,string name,point position,player_direction direction,char character='\\', int age = 0,int injure=0, int hunger = 0, int weight = -1, int maxAge = -1, bool alive = true)
         {
             range r = new range(0, 1);
             
@@ -371,6 +372,9 @@ namespace game_of_life
                 r.End = MaxAge;
                 Age = r.getRandFrom();
             }
+
+            //assign injure level
+            Injure = injure > -1 ? Injure = injure : range.getRandFrom(0, 10);
 
             //if age > maxage then player can`t live.
             Alive = Age < MaxAge ? alive : false;
