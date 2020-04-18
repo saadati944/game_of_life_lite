@@ -24,7 +24,7 @@ namespace game_of_life
             for (int i = 0; i < 200; i++)
             {
                 player p = new player((player.player_kind)(i % 5), "",new point(-1,-1),'\\', -1, -1, -1,-1,true) ;
-
+                world.players.Add(p);
                 Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character,p.Position.ToString());
             }
         }
