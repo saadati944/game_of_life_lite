@@ -34,7 +34,7 @@ namespace game_of_life
             {
                 player p = new player((player.player_kind)(i % 5), "",new point(-1,-1),'\\', -1, -1, -1,-1,true) ;
 
-                Console.WriteLine("name : {0}\ncharacter : {7}\nkind : {1}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character);
+                Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character,p.Position.ToString());
             }
         }
         public static bool havePlayer(string name)
@@ -119,12 +119,14 @@ namespace game_of_life
             if (position.x == -1 && position.y == -1 || !Program.isPositionEmpty(position))
                 do
                 {
+
                     r.Start = 0;
                     r.End = Program.w;
-                    Position.x = r.getRandFrom();
+                    position.x = r.getRandFrom();
                     r.End = Program.h;
-                    Position.y = r.getRandFrom();
-                } while (!Program.isPositionEmpty(Position));
+                    position.y = r.getRandFrom();
+                } while (!Program.isPositionEmpty(position));
+            Position=position;
         }
     }
 
@@ -153,6 +155,10 @@ namespace game_of_life
         {
             this.x = x;
             this.y = y;
+        }
+        public string ToString()
+        {
+            return x.ToString() + ':' + y.ToString();
         }
     }
 }
