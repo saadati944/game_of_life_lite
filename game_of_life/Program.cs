@@ -21,7 +21,7 @@ namespace game_of_life
 
 
             //---------------- a simple test ------------------
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < 900; i++)
             {
                 player p = new player((player.player_kind)(i % 5), "",new point(-1,-1),'\\', -1, -1, -1,-1,true) ;
                 world.players.Add(p);
@@ -123,9 +123,9 @@ namespace game_of_life
                 {
 
                     r.Start = 0;
-                    r.End = world.w;
+                    r.End = world.w-1;
                     position.x = r.getRandFrom();
-                    r.End = world.h;
+                    r.End = world.h-1;
                     position.y = r.getRandFrom();
                 } while (!world.isPositionEmpty(position));
             Position=position;
