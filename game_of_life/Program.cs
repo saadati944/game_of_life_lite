@@ -21,10 +21,11 @@ namespace game_of_life
 
 
             //---------------- a simple test ------------------
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 10; i++)
             {
                 player p = new player((player.player_kind)(i % 5), "", new point(-1, -1), (player.player_direction)range.getRandFrom(0, 6), '\\', -1, -1, -1,-1, -1, -1, true);
                 world.players.Add(p);
+                world.maxEnergy += p.Weight;
                 Console.WriteLine("name : {0}\ncharacter : {7}\nposition : {8}\nkind : {1}\ndirection : {9}\nage : {2}\nmaxage : {3}\nweight : {4}\nhunger level : {5}\nis alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character, p.Position.ToString(), p.Direction.ToString());
             }
             /*player p = new player((player.player_kind)(0), "", new point(0, 29), (player.player_direction)range.getRandFrom(0, 6), '3', -1, -1, -1, -1, true);
@@ -43,7 +44,8 @@ namespace game_of_life
                 world.nextGen();
                 world.draw();
                 Console.SetCursorPosition(0, 0);
-                Console.Write(world.convertBuffer());
+                Console.WriteLine(world.convertBuffer());
+                Console.Write(world.log);
                 Console.Title = $"generation : {world.generation} & year : {world.year} & players : {world.players.Count}";
                 System.Threading.Thread.Sleep(world.__waitAfterNewGen);
             }
@@ -54,17 +56,20 @@ namespace game_of_life
     {
         public static char[,] buffer, nullBuffer;
         public static long generation = 0, year = 0;
+        public static string log;
         //public variables
-        public static int w = 30, h = 15, speed = 1;
+        public static int w = 10, h = 5, speed = 1;
         public static List<player> players = new List<player>();
+        public static int maxEnergy=0,energy=0;
         #region configValues
-        public static int __weightstart = 10, __weightend = 150, __agestart = 0, __hungerstart = 0, __hungerend = 10, __maxagestart = 20, __maxageend = 100, __namestart = 100000, __nameend = 900000, __genstoyear = 20,__childstart=0,__childend=3,__maxPlayers=200,__waitAfterNewGen=0,__maxmaxage=100;
+        public static int __weightstart = 10, __weightend = 150, __agestart = 0, __hungerstart = 0, __hungerend = 10, __maxagestart = 20, __maxageend = 100, __namestart = 100000, __nameend = 900000, __genstoyear = 25,__childstart=0,__childend=4,__maxPlayers=200,__waitAfterNewGen=100,__maxmaxage=100,__minWeightForBaby=20;
         public static char[] __defaultKindCharacters = { 'M', 'F', 'f', 'A', 'a' };
         #endregion
 
         private static int[] kinds = { 0, 0, 0, 0, 0 };
         public static void nextGen()
         {
+            energy = 0;
             kinds = new int[]{ 0, 0, 0, 0, 0 };
             if (players.Count == 0)
             {
@@ -86,7 +91,7 @@ namespace game_of_life
 
 
                 //remove dead players
-                if (players[i].Weight <= 1)
+                if (players[i].Weight <= 0)
                 {
                     toRemove.Add(players[i]);
                     continue;
@@ -129,9 +134,14 @@ namespace game_of_life
                 if (players[i].Kind != player.player_kind.food && players[i].Weight == __weightend)
                 {
                     players[i].MaxAge += 1;
-                    players[i].Weight = (int)(players[i].Weight*0.9);
-                    players[i].Child++;
+                    players[i].Weight = (int)(players[i].Weight * 0.9);
+                    if (players[i].MaxAge >= __maxmaxage&&players[i].Age>=__maxmaxage/2)
+                    {
+                        players[i].Age = (int)(players[i].Age * 0.9);
+                        players[i].Child++;
+                    }
                 }
+                energy += players[i].Weight;
                 //living.
                 switch (players[i].Kind)
                 {
@@ -153,7 +163,7 @@ namespace game_of_life
                                     x.Weight -= __weightend - players[i].Weight;
                                 }
                             }
-                            else if(__maxPlayers>players.Count&&players[i].Child>0&&x.Kind == player.player_kind.female&&x.Child>0)
+                            else if(__maxPlayers>players.Count&&players[i].Child>0&&players[i].Weight>= __minWeightForBaby && x.Kind == player.player_kind.female&&x.Child>0&&x.Weight>= __minWeightForBaby)
                             {
 
                                 player p = new player((player.player_kind)range.getRandFrom(0,1), "", new point(-1, -1), (player.player_direction)range.getRandFrom(0, 6), '\\', 0, 0, -1, 0, x.Weight/2+players[i].Weight/2, -1, true);
@@ -207,7 +217,7 @@ namespace game_of_life
                                     x.Weight -= __weightend - players[i].Weight;
                                 }
                             }
-                            else if (__maxPlayers > players.Count && players[i].Child > 0 && x.Kind == player.player_kind.animalFemale && x.Child > 0)
+                            else if (__maxPlayers > players.Count && players[i].Child > 0 && players[i].Weight >= __minWeightForBaby && x.Kind == player.player_kind.animalFemale && x.Child > 0 && x.Weight >= __minWeightForBaby)
                             {
 
                                 player p = new player((player.player_kind)range.getRandFrom(3, 4), "", new point(-1, -1), (player.player_direction)range.getRandFrom(0, 6), '\\', 0, 0, -1, 0, x.Weight / 2 + players[i].Weight / 2, -1, true);
@@ -442,12 +452,13 @@ namespace game_of_life
 
                 //loging
                 kinds[(int)players[i].Kind]++;
-                kinds[2] = players.Count - kinds.Sum() + kinds[2];
-                if (kinds.Sum() == kinds[2])
-                    kinds[2] = players.Count;
+                kinds[(int)player.player_kind.food] = 0;
+                kinds[(int)player.player_kind.food] = players.Count-kinds.Sum();
+                if (kinds.Sum()==0)
+                    kinds[(int)player.player_kind.food] = players.Count;
             }
-
-            Console.WriteLine($"\nmales : {kinds[0]} , females : {kinds[1]} , foods : {kinds[2]} , animalMale : {kinds[3]} , animalFemale : {kinds[4]}                      ");
+            
+            log=$"\nmales : {kinds[0]} , females : {kinds[1]} , foods : {kinds[2]} , animalMale : {kinds[3]} , animalFemale : {kinds[4]}     \ndead : {toRemove.Count} , born : {toAdd.Count} , maxenergy : {maxEnergy} , current energy : {energy}     ";
 
             generation++;
             if (generation % __genstoyear == 0)
