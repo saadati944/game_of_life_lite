@@ -159,8 +159,9 @@ namespace game_of_life
                                 }
                                 else 
                                 {
-                                    players[i].Weight += __weightend - players[i].Weight;
-                                    x.Weight -= __weightend - players[i].Weight;
+                                    int trw = __weightend - players[i].Weight;
+                                    players[i].Weight += trw;
+                                    x.Weight -= trw;
                                 }
                             }
                             else if(__maxPlayers>players.Count&&players[i].Child>0&&players[i].Weight>= __minWeightForBaby && x.Kind == player.player_kind.female&&x.Child>0&&x.Weight>= __minWeightForBaby)
@@ -193,8 +194,9 @@ namespace game_of_life
                                 }
                                 else
                                 {
-                                    players[i].Weight += __weightend - players[i].Weight;
-                                    x.Weight -= __weightend - players[i].Weight;
+                                    int trw = __weightend - players[i].Weight;
+                                    players[i].Weight += trw;
+                                    x.Weight -= trw;
                                 }
                             }
                         }
@@ -213,8 +215,9 @@ namespace game_of_life
                                 }
                                 else
                                 {
-                                    players[i].Weight += __weightend - players[i].Weight;
-                                    x.Weight -= __weightend - players[i].Weight;
+                                    int trw = __weightend - players[i].Weight;
+                                    players[i].Weight += trw;
+                                    x.Weight -= trw;
                                 }
                             }
                             else if (__maxPlayers > players.Count && players[i].Child > 0 && players[i].Weight >= __minWeightForBaby && x.Kind == player.player_kind.animalFemale && x.Child > 0 && x.Weight >= __minWeightForBaby)
@@ -247,8 +250,9 @@ namespace game_of_life
                                 }
                                 else
                                 {
-                                    players[i].Weight += __weightend - players[i].Weight;
-                                    x.Weight -= __weightend - players[i].Weight;
+                                    int trw = __weightend - players[i].Weight;
+                                    players[i].Weight += trw;
+                                    x.Weight -= trw;
                                 }
                             }
                         }
