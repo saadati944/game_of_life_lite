@@ -39,8 +39,11 @@ namespace game_of_life
             Console.Write("press enter to exit");
             Console.ReadLine();
             Console.Clear();
+            world.__maxPlayers=world.__maxPlayers > world.w * world.h ?  world.h * world.w :world.__maxPlayers;
             while (true)
             {
+                if (Console.KeyAvailable && Console.ReadKey().Key == ConsoleKey.Escape)
+                    world.menu();
                 world.nextGen();
                 world.draw();
                 Console.SetCursorPosition(0, 0);
@@ -62,8 +65,8 @@ namespace game_of_life
         public static List<player> players = new List<player>();
         public static int maxEnergy=0,energy=0;
         #region configValues
-        public static int __weightstart = 10, __weightend = 150, __agestart = 0, __hungerstart = 0, __hungerend = 10, __maxagestart = 20, __maxageend = 100, __namestart = 100000, __nameend = 900000, __genstoyear = 25,__childstart=0,__childend=4,__maxPlayers=200,__waitAfterNewGen=100,__maxmaxage=100,__minWeightForBaby=20;
-        public static char[] __defaultKindCharacters = { 'M', 'F', 'f', 'A', 'a' };
+        public static int __weightstart = 10, __weightend = 150, __agestart = 0, __hungerstart = 0, __hungerend = 10, __maxagestart = 20, __maxageend = 100, __namestart = 100000, __nameend = 900000, __genstoyear = 25,__childstart=0,__childend=40,__maxPlayers=200, __maxwaitAfterNewGen=2000, __waitAfterNewGen = 33,__maxmaxage=100,__minWeightForBaby=20;
+        public static char[] __defaultKindCharacters = { '|', '_', '@', 'A', 'a' };
         #endregion
 
         private static int[] kinds = { 0, 0, 0, 0, 0 };
@@ -470,6 +473,77 @@ namespace game_of_life
             foreach (player x in toRemove)
                 players.Remove(x);
             players.AddRange(toAdd);
+        }
+        public static void menu() 
+        {
+            Console.Clear();
+            Console.WriteLine("geme of life menu :\n\nkeys list :\n1 : add a male\n2 : add a female\n3 : add a food\n4 : add an animalmale\n5 : add an animalfemale\n6 : set speed\n\n");
+            player p;
+            switch (Console.ReadKey(true).Key)
+            {
+                case ConsoleKey.D1:
+                    p= new player(player.player_kind.male, "", new point(-1, -1), (player.player_direction)range.getRandFrom(0, 6), '\\', -1, -1, -1, -1, -1, -1, true);
+                    world.players.Add(p);
+                    world.maxEnergy += p.Weight;
+                    Console.WriteLine("added player info :\n    name : {0}\n    character : {7}\n   position : {8}\n    kind : {1}\nchild : {10}\n    direction : {9}\n   age : {2}\n maxage : {3}\n  weight : {4}\n  hunger level : {5}\n    is alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character, p.Position.ToString(), p.Direction.ToString(),p.Child);
+                    break;
+                case ConsoleKey.D2:
+                    p = new player(player.player_kind.female, "", new point(-1, -1), (player.player_direction)range.getRandFrom(0, 6), '\\', -1, -1, -1, -1, -1, -1, true);
+                    world.players.Add(p);
+                    world.maxEnergy += p.Weight;
+                    Console.WriteLine("added player info :\n    name : {0}\n    character : {7}\n   position : {8}\n    kind : {1}\nchild : {10}\n    direction : {9}\n   age : {2}\n maxage : {3}\n  weight : {4}\n  hunger level : {5}\n    is alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character, p.Position.ToString(), p.Direction.ToString(), p.Child);
+                    break;
+                case ConsoleKey.D3:
+                    p = new player(player.player_kind.food, "", new point(-1, -1), (player.player_direction)range.getRandFrom(0, 6), '\\', -1, -1, -1, -1, -1, -1, true);
+                    world.players.Add(p);
+                    world.maxEnergy += p.Weight;
+                    Console.WriteLine("added player info :\n    name : {0}\n    character : {7}\n   position : {8}\n    kind : {1}\nchild : {10}\n    direction : {9}\n   age : {2}\n maxage : {3}\n  weight : {4}\n  hunger level : {5}\n    is alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character, p.Position.ToString(), p.Direction.ToString(), p.Child);
+                    break;
+                case ConsoleKey.D4:
+                    p = new player(player.player_kind.animalMale, "", new point(-1, -1), (player.player_direction)range.getRandFrom(0, 6), '\\', -1, -1, -1, -1, -1, -1, true);
+                    world.players.Add(p);
+                    world.maxEnergy += p.Weight;
+                    Console.WriteLine("added player info :\n    name : {0}\n    character : {7}\n   position : {8}\n    kind : {1}\nchild : {10}\n    direction : {9}\n   age : {2}\n maxage : {3}\n  weight : {4}\n  hunger level : {5}\n    is alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character, p.Position.ToString(), p.Direction.ToString(), p.Child);
+                    break;
+                case ConsoleKey.D5:
+                    p = new player(player.player_kind.animalFemale, "", new point(-1, -1), (player.player_direction)range.getRandFrom(0, 6), '\\', -1, -1, -1, -1, -1, -1, true);
+                    world.players.Add(p);
+                    world.maxEnergy += p.Weight;
+                    Console.WriteLine("added player info :\n    name : {0}\n    character : {7}\n   position : {8}\n    kind : {1}\n    direction : {9}\n   age : {2}\n maxage : {3}\n  weight : {4}\n  hunger level : {5}\n    is alive : {6}\n\n_________________________________________________\n\n", p.Name, p.Kind.ToString(), p.Age, p.MaxAge, p.Weight, p.Hunger, p.Alive.ToString(), p.Character, p.Position.ToString(), p.Direction.ToString());
+                    break;
+                case ConsoleKey.D6:
+                    Console.Clear();
+                    Console.Write(__waitAfterNewGen);
+                    while (true)
+                    {
+                        bool e = true;
+                        switch (Console.ReadKey(true).Key)
+                        {
+                            case ConsoleKey.UpArrow:
+                                if (__waitAfterNewGen < __maxwaitAfterNewGen)
+                                    __waitAfterNewGen++;
+                                e = false;
+                                break;
+                            case ConsoleKey.DownArrow:
+                                if (__waitAfterNewGen > 0)
+                                    __waitAfterNewGen--;
+                                e = false;
+                                break;
+                            default:
+                                
+                                break;
+                        }
+                        Console.Clear();
+                        Console.Write(__waitAfterNewGen);
+                        if (e) break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            Console.Write("press enter to continue...");
+            Console.ReadLine();
+            Console.Clear();
         }
         public static void gameOver()
         {
